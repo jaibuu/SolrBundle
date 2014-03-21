@@ -225,11 +225,15 @@ class Solr
      */
     public function query(AbstractQuery $query)
     {
+        $sorts =  $query->getSorts();
+
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
         $query = $this->solrClient->createSelect($query->getOptions());
         $query->setQuery($queryString);
+
+        $query->setSorts($sorts);
 
         try {
             $response = $this->solrClient->select($query);
