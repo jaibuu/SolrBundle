@@ -30,11 +30,36 @@ class SolrQuery extends AbstractQuery
     private $customQuery = '';
 
     /**
+     * @var array
+     */
+    private $response = array();
+
+    /**
+     * @var object
+     */
+    private $clientQuery;
+
+    /**
+     * @return array
+     */
+    public function createSelect()
+    {
+        return $this->solr->createSelectQuery($this);
+    }
+
+    /**
      * @return array
      */
     public function getResult()
     {
         return $this->solr->query($this);
+    }
+    /**
+     * @return array
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 
     /**
@@ -83,6 +108,14 @@ class SolrQuery extends AbstractQuery
     public function setCustomQuery($query)
     {
         $this->customQuery = $query;
+    }
+
+    /**
+     * @param array $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
     }
 
     /**
@@ -136,6 +169,14 @@ class SolrQuery extends AbstractQuery
         }
 
         return $this;
+    }
+
+    public function getClientQuery(){
+        return $this->clientQuery;        
+    }
+
+    public function setClientQuery($clientQuery){
+        $this->clientQuery = $clientQuery;
     }
 
     /**

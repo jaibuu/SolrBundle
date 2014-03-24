@@ -223,20 +223,39 @@ class Solr
      * @param AbstractQuery $query
      * @return array of found documents
      */
+    public function createSelectQuery(AbstractQuery $query)
+    {   
+        $solrQuery = $query;
+
+
+        $query = $this->solrClient->createSelect($query->getOptions());
+        $solrQuery->setClientQuery($query);
+        return $query;
+    }
+
+    /**
+     * @param AbstractQuery $query
+     * @return array of found documents
+     */
     public function query(AbstractQuery $query)
-    {
+    {   
+        $solrQuery = $query;
+
         $sorts =  $query->getSorts();
 
         $entity = $query->getEntity();
 
         $queryString = $query->getQuery();
-        $query = $this->solrClient->createSelect($query->getOptions());
+        $query = $solrQuery->getClientQuery();
         $query->setQuery($queryString);
 
         $query->setSorts($sorts);
 
         try {
             $response = $this->solrClient->select($query);
+            $solrQuery->setResponse($response);
+
+
         } catch (\Exception $e) {
             $errorEvent = new ErrorEvent(null, null, 'query solr');
             $errorEvent->setException($e);
