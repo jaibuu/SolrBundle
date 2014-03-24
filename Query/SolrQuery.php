@@ -15,6 +15,11 @@ class SolrQuery extends AbstractQuery
     private $searchTerms = array();
 
     /**
+     * @var array
+     */
+    private $searchOperators = array();
+
+    /**
      * @var bool
      */
     private $useAndOperator = false;
@@ -127,6 +132,14 @@ class SolrQuery extends AbstractQuery
     }
 
     /**
+     * @return array
+     */
+    public function getSearchOperators()
+    {
+        return $this->searchOperators;
+    }
+
+    /**
      * @param array $value
      */
     public function queryAllFields($value)
@@ -144,7 +157,7 @@ class SolrQuery extends AbstractQuery
      * @param string $value
      * @return SolrQuery
      */
-    public function addSearchTerm($field, $value)
+    public function addSearchTerm($field, $value, $operator = null)
     {
         $documentFieldsAsValues = array_flip($this->mappedFields);
 
@@ -152,6 +165,11 @@ class SolrQuery extends AbstractQuery
             $documentFieldName = $documentFieldsAsValues[$field];
 
             $this->searchTerms[$documentFieldName] = $value;
+
+            //adding operator before the current field
+            end($this->searchOperators);
+            $this->searchOperators[key($this->searchOperators)] = $this->searchOperators[$documentFieldName] = $operator;
+            reset($this->searchOperators);
         }
 
         return $this;
@@ -200,6 +218,7 @@ class SolrQuery extends AbstractQuery
         }
 
         $termCount = 1;
+
         foreach ($this->searchTerms as $fieldName => $fieldValue) {
 
             if ($this->useWildcards) {
@@ -209,7 +228,11 @@ class SolrQuery extends AbstractQuery
             }
 
             if ($termCount < count($this->searchTerms)) {
-                $term .= ' ' . $logicOperator . ' ';
+                if($this->searchOperators[$fieldName]){
+                    $term .= ' ' . $this->searchOperators[$fieldName] . ' ';
+                } else {
+                    $term .= ' ' . $logicOperator . ' ';
+                }
             }
 
             $termCount++;
