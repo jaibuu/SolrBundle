@@ -73,6 +73,14 @@ class Solr
     }
 
     /**
+     * @return Solarium\Client
+     */
+    public function getSolrClient()
+    {
+        return $this->solrClient;
+    }
+
+    /**
      * @return EntityMapper
      */
     public function getMapper()
