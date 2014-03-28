@@ -35,6 +35,11 @@ class SolrQuery extends AbstractQuery
     private $customQuery = '';
 
     /**
+     * @var string
+     */
+    private $partialQuery = '';
+
+    /**
      * @var array
      */
     private $response = array();
@@ -116,11 +121,44 @@ class SolrQuery extends AbstractQuery
     }
 
     /**
+     * @return string
+     */
+    public function getPartialQuery()
+    {
+        return $this->partialQuery;
+    }
+
+    /**
+     * @param string $query
+     */
+    public function setPartialQuery($query)
+    {
+        $this->partialQuery = $query;
+    }
+
+    /**
+     * Enclosing query in parentheses
+     */
+    public function encloseQuery( $append = '(', $prepend =  ')' )
+    {
+        $this->partialQuery = $append . $this->getQuery() . $prepend;
+        $this->clearSearchTerms();
+    }
+
+    /**
      * @param array $response
      */
     public function setResponse($response)
     {
         $this->response = $response;
+    }
+
+    /**
+     * @return array
+     */
+    public function clearSearchTerms()
+    {
+        $this->searchTerms = array();
     }
 
     /**
@@ -208,6 +246,12 @@ class SolrQuery extends AbstractQuery
         }
 
         $term = '';
+
+        if ($this->partialQuery) {
+            $term = $this->partialQuery;
+        }
+
+
         if (count($this->searchTerms) == 0) {
             return $term;
         }
