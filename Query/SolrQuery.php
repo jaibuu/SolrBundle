@@ -62,7 +62,15 @@ class SolrQuery extends AbstractQuery
      */
     public function getResult()
     {
-        return $this->solr->query($this);
+        return $this->solr->query($this, true);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSolrResult()
+    {
+        return $this->solr->query($this, false);
     }
     /**
      * @return array

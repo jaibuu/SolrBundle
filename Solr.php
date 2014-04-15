@@ -245,7 +245,7 @@ class Solr
      * @param AbstractQuery $query
      * @return array of found documents
      */
-    public function query(AbstractQuery $query)
+    public function query(AbstractQuery $query, $mapToEntity = true )
     {   
         $solrQuery = $query;
 
@@ -280,11 +280,16 @@ class Solr
 
         $targetEntity = $entity;
         $mappedEntities = array();
-        foreach ($response as $document) {
-            $mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
+
+        if($mapToEntity){
+            foreach ($response as $document) {
+                $mappedEntities[] = $this->entityMapper->toEntity($document, $targetEntity);
+            }
+            return $mappedEntities;
+        }else{
+            return $response;
         }
 
-        return $mappedEntities;
     }
 
     /**
